@@ -1,0 +1,124 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
+}
+
+enum Role {
+  ADMIN
+  OPERATOR
+}
+
+enum UnitStatus {
+  VACANT
+  OCCUPIED
+}
+
+enum PaymentStatus {
+  UNPAID
+  PARTIAL
+  PAID
+}
+
+model Profile {
+  id          String               @id // = Supabase auth user id
+  name        String
+  email       String               @unique
+  phone       String?
+  role        Role                 @default(OPERATOR)
+  active      Boolean              @default(true)
+  assignments BuildingAssignment[]
+  createdAt   DateTime             @default(now())
+}
+
+model Building {
+  id          String               @id @default(cuid())
+  code        String               @unique
+  name        String
+  address     String?
+  units       Unit[]
+  expenses    Expense[]
+  invoices    Invoice[]
+  assignments BuildingAssignment[]
+  createdAt   DateTime             @default(now())
+}
+
+model BuildingAssignment {
+  id         String   @id @default(cuid())
+  userId     String
+  buildingId String
+  user       Profile  @relation(fields: [userId], references: [id], onDelete: Cascade)
+  building   Building @relation(fields: [buildingId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, buildingId])
+}
+
+model Unit {
+  id          String       @id @default(cuid())
+  buildingId  String
+  building    Building     @relation(fields: [buildingId], references: [id], onDelete: Cascade)
+  name        String
+  status      UnitStatus   @default(VACANT)
+  tenantName  String?
+  tenantPhone String?
+  baseRent    Decimal      @db.Decimal(12, 2)
+  advanceBalance Decimal   @default(0) @db.Decimal(12, 2)
+  records     RentRecord[]
+
+  @@unique([buildingId, name])
+}
+
+model RentRecord {
+  id          String        @id @default(cuid())
+  unitId      String
+  unit        Unit          @relation(fields: [unitId], references: [id], onDelete: Cascade)
+  invoiceId   String?
+  invoice     Invoice?      @relation(fields: [invoiceId], references: [id], onDelete: SetNull)
+  year        Int
+  month       Int
+  unitStatus  UnitStatus
+  tenantName  String?
+  rentDue     Decimal       @default(0) @db.Decimal(12, 2)
+  utilities   Decimal       @default(0) @db.Decimal(12, 2)
+  advanceApplied Decimal    @default(0) @db.Decimal(12, 2)
+  paid        Decimal       @default(0) @db.Decimal(12, 2)
+  status      PaymentStatus @default(UNPAID)
+  note        String?
+  createdById String
+  updatedAt   DateTime      @updatedAt
+
+  @@unique([unitId, year, month])
+}
+
+model Invoice {
+  id           String       @id @default(cuid())
+  invoiceNo    String       @unique
+  transactionId String      @unique @default(cuid())
+  buildingId   String
+  building     Building     @relation(fields: [buildingId], references: [id], onDelete: Cascade)
+  year         Int
+  month        Int
+  totalRent    Decimal      @default(0) @db.Decimal(14, 2)
+  totalPaid    Decimal      @default(0) @db.Decimal(14, 2)
+  totalDue     Decimal      @default(0) @db.Decimal(14, 2)
+  totalExpense Decimal      @default(0) @db.Decimal(14, 2)
+  records      RentRecord[]
+  createdAt    DateTime     @default(now())
+
+  @@unique([buildingId, year, month])
+}
+
+model Expense {
+  id         String   @id @default(cuid())
+  buildingId String
+  building   Building @relation(fields: [buildingId], references: [id], onDelete: Cascade)
+  year       Int
+  month      Int
+  category   String
+  amount     Decimal  @db.Decimal(12, 2)
+  note       String?
+}

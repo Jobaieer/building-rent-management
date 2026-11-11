@@ -1,0 +1,167 @@
+@import "tailwindcss";
+
+:root {
+  color-scheme: dark;
+}
+
+::selection {
+  background: #115e59;
+  color: #ccfbf1;
+}
+
+body {
+  position: relative;
+  overflow-x: hidden;
+  background:
+    radial-gradient(circle at 8% 0%, rgba(45, 212, 191, 0.2), transparent 30rem),
+    radial-gradient(circle at 92% 18%, rgba(14, 165, 233, 0.15), transparent 24rem),
+    linear-gradient(135deg, #020617 0%, #071827 46%, #031e23 100%);
+  background-size: 150% 150%, 150% 150%, 180% 180%;
+  animation: backgroundDrift 18s ease-in-out infinite alternate;
+  color: #e2e8f0;
+}
+
+body > * {
+  position: relative;
+  z-index: 1;
+}
+
+body::before {
+  position: fixed;
+  z-index: 0;
+  top: 8rem;
+  left: 50%;
+  width: 28rem;
+  height: 28rem;
+  border-radius: 9999px;
+  background: radial-gradient(circle, rgba(45, 212, 191, 0.18), rgba(20, 184, 166, 0.04) 48%, transparent 72%);
+  content: "";
+  filter: blur(48px);
+  pointer-events: none;
+  transform: translateX(-50%);
+  animation: glowFloat 12s ease-in-out infinite alternate;
+}
+
+body::after {
+  position: fixed;
+  z-index: 0;
+  right: -10rem;
+  bottom: -12rem;
+  width: 32rem;
+  height: 32rem;
+  border-radius: 9999px;
+  background: radial-gradient(circle, rgba(14, 165, 233, 0.14), rgba(13, 148, 136, 0.04) 45%, transparent 72%);
+  content: "";
+  filter: blur(58px);
+  pointer-events: none;
+  animation: glowFloatReverse 16s ease-in-out infinite alternate;
+}
+
+@keyframes backgroundDrift {
+  0% { background-position: 0% 0%, 100% 10%, 0% 50%; }
+  100% { background-position: 14% 10%, 86% 24%, 100% 50%; }
+}
+
+@keyframes glowFloat {
+  0% { opacity: 0.55; transform: translate(-50%, -1rem) scale(0.94); }
+  100% { opacity: 1; transform: translate(-42%, 3rem) scale(1.08); }
+}
+
+@keyframes glowFloatReverse {
+  0% { opacity: 0.45; transform: translate(0, 0) scale(0.9); }
+  100% { opacity: 0.85; transform: translate(-3rem, -4rem) scale(1.1); }
+}
+
+.bg-white {
+  background-color: #0f172a !important;
+}
+
+.bg-slate-50 {
+  background-color: #0f172a !important;
+}
+
+.bg-slate-100 {
+  background-color: #1e293b !important;
+}
+
+.border-slate-100,
+.border-slate-200,
+.border-slate-300 {
+  border-color: #334155 !important;
+}
+
+.text-slate-900 {
+  color: #f1f5f9 !important;
+}
+
+.text-slate-800 {
+  color: #e2e8f0 !important;
+}
+
+.text-slate-700,
+.text-slate-600 {
+  color: #cbd5e1 !important;
+}
+
+.text-slate-500,
+.text-slate-400 {
+  color: #94a3b8 !important;
+}
+
+.text-teal-700 {
+  color: #5eead4 !important;
+}
+
+.bg-teal-50 {
+  background-color: rgba(13, 148, 136, 0.16) !important;
+}
+
+.hover\:bg-slate-100:hover {
+  background-color: #1e293b !important;
+}
+
+.hover\:bg-slate-50:hover {
+  background-color: #172033 !important;
+}
+
+.hover\:bg-teal-50:hover {
+  background-color: rgba(13, 148, 136, 0.2) !important;
+}
+
+.text-red-700 {
+  color: #fca5a5 !important;
+}
+
+input,
+select {
+  color: #e2e8f0;
+}
+
+input::placeholder {
+  color: #64748b;
+}
+
+option {
+  background: #0f172a;
+  color: #e2e8f0;
+}
+
+button,
+a,
+input,
+select {
+  transition: colors 150ms ease, box-shadow 150ms ease, transform 150ms ease;
+}
+
+@media print {
+  .no-print { display: none !important; }
+  body { background: white; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  body,
+  body::before,
+  body::after {
+    animation: none;
+  }
+}
